@@ -1,4 +1,15 @@
 {
+  "name": "express_babel",
+  "version": "1.0.0",
+  "description": "An express setup with babel and eslint. It also has been setup with babel-plugin-module-resolver where you can setup a custom alias for directories, specific files, or even other npm modules",
+  "main": "src/index.js",
+  "author": "Shoaib Sharif",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon --exec babel-node src/index.js",
+    "build": "babel src --out-dir build",
+    "start": "yarn build && node build/index.js"
+  },
   "devDependencies": {
     "@babel/cli": "^7.7.7",
     "@babel/core": "^7.7.7",
