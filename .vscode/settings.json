@@ -1,5 +1,25 @@
 {
   "path-intellisense.mappings": {
     "": "${workspaceRoot}/src"
-  }
+  },
+  "sqltools.connections": [
+    {
+      "database": "adonis",
+      "dialect": "MySQL",
+      "name": "myCloudServer",
+      "password": "shoaib72",
+      "port": 3306,
+      "server": "192.168.1.41",
+      "username": "shoaib"
+    },
+    {
+      "database": "adonis",
+      "dialect": "PostgreSQL",
+      "name": "psqlserver",
+      "password": "shoaib",
+      "port": 5432,
+      "server": "192.168.1.41",
+      "username": "shoaib"
+    }
+  ]
 }
