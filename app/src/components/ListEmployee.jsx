@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -9,8 +9,14 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
+import { useSelector, useDispatch } from "react-redux";
+import { loadEmployees } from "../store/employee";
+import Axios from "axios";
 
-const ListEmployee = ({ employees }) => {
+const ListEmployee = () => {
+  const employees = useSelector(state => state.employees);
+  const dispatch = useDispatch();
+
   return (
     <Container>
       <Typography

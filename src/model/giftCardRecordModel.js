@@ -10,6 +10,7 @@ const giftCardRecordScema = new mongoose.Schema({
     type: Date,
     required: true
   }
+ 
 });
 
 const giftCardRecord = mongoose.model("giftCardRecord", giftCardRecordScema);

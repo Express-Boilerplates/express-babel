@@ -50,7 +50,8 @@ export const createEmployee = async (req, res, next) => {
   // return res.json({
   //   data: newEmployee
   // });
-  return res.json({ ...req.body });
+  const employee = await Employee.create({ ...req.body });
+  return res.json({ employee });
 };
 
 /**
@@ -72,4 +73,9 @@ export const updateEmployee = async (req, res, next) => {
   res.status(200).json({
     data: updatedEmployee
   });
+};
+
+export const deleteEmployee = async (req, res) => {
+  await Employee.findByIdAndDelete(req.params?.id);
+  return res.status(204).json({ status: "success" });
 };

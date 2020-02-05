@@ -1,11 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import TextField from "@material-ui/core/TextField";
 import Fab from "@material-ui/core/Fab";
 import Container from "@material-ui/core/Container";
+import Snackbar from "@material-ui/core/Snackbar";
+import Alert from "@material-ui/lab/Alert";
 import { makeStyles } from "@material-ui/core/styles";
 import { useForm } from "react-hook-form";
 import Axios from "axios";
 import * as yup from "yup";
+
+import { addEmployee } from "store/employee";
+import { useDispatch } from "react-redux";
 
 const AddEmployeeSchema = yup.object().shape({
   name: yup.string().required("Name is required"),
@@ -30,17 +35,26 @@ const useStyles = makeStyles(theme => ({
     "& > *": {
       margin: theme.spacing(1),
       width: 200
-    }
-  },
-  root: {
-    "& > *": {
-      margin: theme.spacing(1),
-      width: 200
+    },
+    [theme.breakpoints.down("sm")]: {
+      flexDirection: "column",
+      "& > *": {
+        margin: theme.spacing(1),
+        width: 300
+      }
+    },
+    root: {
+      "& > *": {
+        margin: theme.spacing(1),
+        width: 200
+      }
     }
   }
 }));
 
 const AddEmployee = () => {
+  const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
   const classes = useStyles();
   const { register, handleSubmit, errors } = useForm({
     validateCriteriaMode: "all",
@@ -51,16 +65,33 @@ const AddEmployee = () => {
   });
   const onSubmit = async data => {
     try {
-      const employee = await Axios.post("http://localhost:4343/api/employee", {
+      const employee = await Axios.post("/api/employee", {
         ...data
       });
-      console.log(employee);
+      dispatch(addEmployee({ ...employee.data.employee }));
+      setOpen(true);
     } catch (error) {
       console.log(error);
     }
   };
+  const handleClose = () => setOpen(false);
   return (
     <Container component="main" maxWidth="md">
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleClose}
+          variant="filled"
+          elevation={6}
+          severity="success"
+        >
+          Employee Added
+        </Alert>
+      </Snackbar>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className={classes.paper}
