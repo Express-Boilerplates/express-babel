@@ -6,20 +6,20 @@ import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 import { makeStyles } from "@material-ui/core/styles";
 import { useForm } from "react-hook-form";
-import Axios from "axios";
 import * as yup from "yup";
 
 import { addEmployee } from "store/employee";
 import { useDispatch } from "react-redux";
+import { db } from "config/firebase";
 
 const AddEmployeeSchema = yup.object().shape({
   name: yup.string().required("Name is required"),
-  phoneNumber: yup
-    .number("please enter a valid phone number")
-    .transform((currentValue, originalValue) =>
-      originalValue === "" ? undefined : currentValue
-    )
-    .typeError("Please enter a valid phone number"),
+  phone: yup
+    .string()
+    .matches(/^[(]?[0-9]{3}[)]?[-\s]?[0-9]{3}[-\s]?[0-9]{4,6}$/, {
+      message: "Not a valid phone number",
+      excludeEmptyString: true
+    }),
   email: yup
     .string()
     .email("Please enter a valid email address")
@@ -36,6 +36,11 @@ const useStyles = makeStyles(theme => ({
       margin: theme.spacing(1),
       width: 200
     },
+    "& p": {
+      position: "absolute",
+      top: "100%"
+    },
+    paddingBottom: 100,
     [theme.breakpoints.down("sm")]: {
       flexDirection: "column",
       "& > *": {
@@ -56,7 +61,7 @@ const AddEmployee = () => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const classes = useStyles();
-  const { register, handleSubmit, errors } = useForm({
+  const { register, handleSubmit, errors, reset } = useForm({
     validateCriteriaMode: "all",
     validationSchema: AddEmployeeSchema,
     validationSchemaOption: {
@@ -64,15 +69,10 @@ const AddEmployee = () => {
     }
   });
   const onSubmit = async data => {
-    try {
-      const employee = await Axios.post("/api/employee", {
-        ...data
-      });
-      dispatch(addEmployee({ ...employee.data.employee }));
-      setOpen(true);
-    } catch (error) {
-      console.log(error);
-    }
+    const newEmployee = await db.collection("employee").add(data);
+    dispatch(addEmployee({ ...data, id: newEmployee.id }));
+    setOpen(true);
+    reset();
   };
   const handleClose = () => setOpen(false);
   return (
@@ -117,19 +117,17 @@ const AddEmployee = () => {
           fullWidth
           id="email"
           label="Email Address"
-          //   autoComplete="email"
           inputRef={register}
         />
 
         <TextField
           variant="outlined"
-          error={errors?.phoneNumber ? true : false}
-          helperText={errors?.phoneNumber?.message}
+          error={errors?.phone ? true : false}
+          helperText={errors?.phone?.message}
           fullWidth
-          name="phoneNumber"
-          label="phoneNumber"
-          id="phoneNumber"
-          type="tel"
+          name="phone"
+          label="Phone"
+          id="phone"
           inputRef={register}
         />
 
@@ -139,7 +137,7 @@ const AddEmployee = () => {
           color="primary"
           style={{ margin: "10px" }}
         >
-          Add User
+          Add
         </Fab>
       </form>
     </Container>

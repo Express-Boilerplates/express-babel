@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import Axios from "axios";
 
 const employeeSlice = createSlice({
   name: "employee",
@@ -10,9 +9,8 @@ const employeeSlice = createSlice({
     },
     loadEmployees: (state, { payload }) => (state = payload),
     deleteEmployee: (state, { payload }) => {
-      Axios.delete(`/api/employee/${payload._id}`);
       state.splice(
-        state.findIndex(emp => emp._id === payload._id),
+        state.findIndex(emp => emp.id === payload.id),
         1
       );
     }
